@@ -34,12 +34,12 @@ def create_app(test_config=None):
 
         # prep the parameters and return dict to pass to modules
         if action == 'forecast':
-            import forecast
+            import .forecast
             forecast.store = app.instance_path
             return forecast.forecast(request.json)
         # dispatch body to scheduling or forecasting module
         elif action == 'schedule':
-            import schedule
+            import .schedule
             return schedule.schedule(request.json)
 
 
