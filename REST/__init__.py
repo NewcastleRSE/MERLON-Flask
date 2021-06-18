@@ -19,12 +19,12 @@ def create_app(test_config=None):
     # usage: POST https://host:port/api/schedule?api_key=<SAMPLE API KEY HERE>
     #        with appropriate request json in body (see samples)
     @app.route("/api/<action>", methods=['POST'])
-    def do(action,key):
+    def do(action):
         from flask import request
         
         # check key against registered api keys (sample code only)
         key = request.args.get('api_key')
-        if key != '<SAMPLE API KEY HERE>':
+        if key != 'dj75sp1$-':
             return {'message': 'unknown api key provided'}, 401
 
         # check request has been sent with data
