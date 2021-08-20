@@ -1,23 +1,6 @@
 from .utilities import forecasting as fc
 import numpy as np
-
-defaults = {
-    'at-strem': {
-        'generation': {
-            'lags': np.array([0,4,5,23,45,46,47]),
-            'window': 48
-        },
-        'load': {
-            'lags': np.array([0,6,15,31,43,44,45,46,47]),
-            'window': 48
-        }
-    }
-}
-
-definitions = {
-    'minutes': 1,
-    'hours': 60
-}
+from .metadata import definitions, defaults
 
 store = "."
 
@@ -112,5 +95,27 @@ def generationforecast(data, metadata, debug=None):
 
     return result
 
+def train(data, debug=None):
+    site = data['Site']
+    trainers = data['TrainingRequired']
+
+    if "Generation" in trainers:
+        for bus in defaults[site]['busses']['genbusses']:
+            if bus in data['data']:
+                fc.getTrainedGenerationModel(site, bus, store=store, rawdata=data['data'][bus])
+
+    if "Load" in trainers:
+        for bus in defaults[site]['busses']['genbusses']:
+            if bus in data['data']:
+                fc.getTrainedGenerationModel(site, bus, store=store, rawdata=data['data'][bus])
+
+    import os
+    from datetime import date
+    import json
+    with open(os.path.join(store, 'forecast', 'training', site, date.today().isoformat(), 'training.json'), "w") as f:
+        json.dump(data['data'], f)
+
+    return {"status": "OK", "message": "Forecast Training Complete"}
+
 def getDefaults(site, forecast):
-    return defaults[site][forecast]['lags'], defaults[site][forecast]['window']
+    return defaults[site]['forecasting'][forecast]['lags'], defaults[site]['forecasting'][forecast]['window']

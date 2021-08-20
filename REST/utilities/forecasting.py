@@ -90,7 +90,7 @@ def getTrainedGenerationModel(site, bus, store=".", lags=None, window=None, rawd
     modelpath = os.path.join(store, 'forecast', 'models', site, bus, shapeforpath, str(window), 'generation.tf')
     scalerpath = os.path.join(store, 'forecast', 'scalers', site, bus, shapeforpath, str(window), 'generation.pkl')
     
-    if os.path.exists(modelpath):
+    if os.path.exists(modelpath) and rawdata is None:
         model = load_model(modelpath)
         with open(scalerpath, "rb") as f:
             scalers = pickle.load(f)
@@ -166,7 +166,7 @@ def getTrainedLoadModel(site, bus, store=".", lags=None, window=None, rawdata=No
     modelpath = os.path.join(store, 'forecast', 'models', site, bus, shapeforpath, str(window), 'load.tf')
     scalerpath = os.path.join(store, 'forecast', 'scalers', site, bus, shapeforpath, str(window), 'load.pkl')
 
-    if os.path.exists(modelpath):
+    if os.path.exists(modelpath) and rawdata is None:
         model = load_model(modelpath)
         with open(scalerpath, "rb") as f:
             scalers = pickle.load(f)
@@ -209,8 +209,8 @@ def getTrainedLoadModel(site, bus, store=".", lags=None, window=None, rawdata=No
     return model, scalers
 
 def getForecastDefaults(site):
-    from ..forecast import defaults
-    return defaults[site]
+    from ..metadata import defaults
+    return defaults[site]['forecasting']
 
 def formatGenerationTrainingData(rawdata, lags, window):
     # assumes rawdata is a list drawn from json in the forecastRequest format, approx. format
