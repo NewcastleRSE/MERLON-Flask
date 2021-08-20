@@ -1,27 +1,5 @@
 from .utilities import scheduling as sc
-
-definitions = {
-    'minutes': 1,
-    'hours': 60
-}
-
-defaults = {
-    'at-strem': {
-        'batt_cap': 0.25,
-        'batt_pow': 0.25,
-        'nch': 0.95,
-        'ndis': 0.95,
-        'fr': {
-            'start': (0,0,0),
-            'end': (6,0,0),
-            'min': 0.4 * 0.25,
-            'max': 0.6 * 0.25
-        },
-        'loadbuses': ['T205','T261','T265','T264','T262'],
-        'genbuses': ['T205','T261','T267','T265','T266','T264','T262'],
-        'flexbuses': ['T205','T261', 'T265', 'T264','T262']
-    }
-}
+from .metadata import defaults, definitions
 
 def schedule(data):
     import datetime as dt
@@ -30,12 +8,13 @@ def schedule(data):
     steplength = data['isp']/(60 if data['ispType'] == 'minutes' else 1)
     startDate = dt.datetime.fromisoformat(data['SchedulePeriodStart'])
 
-    meta = defaults[site]
+    meta = defaults[site]['scheduling']
+    busses = defaults[site]['busses']
 
     batt_ini = data['Battery']['ChargeState'] * meta['batt_cap'] #assumes battery charge as a fraction of full
-    load = sc.formatLoadForecast(data['Forecast']['Load'], window, steplength, meta['loadbuses'])
-    prod = sc.formatGenerationForecast(data['Forecast']['Generation'], window, steplength, meta['genbuses'])
-    flex_up, flex_down, flex_price = sc.formatFlexibilityData(data['Flexibility'], window, steplength, meta['flexbuses'])
+    load = sc.formatLoadForecast(data['Forecast']['Load'], window, steplength, busses['loadbuses'])
+    prod = sc.formatGenerationForecast(data['Forecast']['Generation'], window, steplength, busses['genbuses'])
+    flex_up, flex_down, flex_price = sc.formatFlexibilityData(data['Flexibility'], window, steplength, busses['flexbuses'])
 
     ele_price = sc.formatPriceData(data['Pricing'], window, steplength)[0]
 
@@ -178,7 +157,7 @@ def schedule(data):
                 'downwards': 0 if Ut_flex_down[busi,i].X < 5e-6 else (Ut_flex_down[busi,i].X/steplength)*1e3
             }
         for i in range(window)]
-    for busi, bus in enumerate(meta['flexbuses'])}
+    for busi, bus in enumerate(busses['flexbuses'])}
 
     result['Generation'] = {
         bus: [
@@ -187,7 +166,7 @@ def schedule(data):
                 'activePower': 0 if Erenew[busi,i].X < 5e-6 else (Erenew[busi,i].X/steplength)*1e3
             }
         for i in range(window)]
-    for busi, bus in enumerate(meta['genbuses'])}
+    for busi, bus in enumerate(busses['genbuses'])}
 
     result['GridPower'] = [
         {

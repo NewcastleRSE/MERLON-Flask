@@ -41,6 +41,8 @@ def create_app(test_config=None):
         elif action == 'schedule':
             from . import schedule
             return schedule.schedule(request.json)
-
+        elif action == 'train':
+            from . import forecast
+            forecast.train(request.json)
 
     return app
