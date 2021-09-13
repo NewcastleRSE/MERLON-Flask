@@ -100,12 +100,12 @@ def train(data, debug=None):
     trainers = data['TrainingRequired']
 
     if "Generation" in trainers:
-        for bus in defaults[site]['busses']['genbusses']:
+        for bus in defaults[site]['busses']['genbuses']:
             if bus in data['data']:
                 fc.getTrainedGenerationModel(site, bus, store=store, rawdata=data['data'][bus])
 
     if "Load" in trainers:
-        for bus in defaults[site]['busses']['genbusses']:
+        for bus in defaults[site]['busses']['loadbuses']:
             if bus in data['data']:
                 fc.getTrainedGenerationModel(site, bus, store=store, rawdata=data['data'][bus])
 
