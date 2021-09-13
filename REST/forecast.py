@@ -112,7 +112,10 @@ def train(data, debug=None):
     import os
     from datetime import date
     import json
-    with open(os.path.join(store, 'forecast', 'training', site, date.today().isoformat(), 'training.json'), "w") as f:
+    datapath = os.path.join(store, 'forecast', 'training', site, date.today().isoformat())
+    os.makedirs(datapath, exist_ok=True)
+
+    with open(os.path.join(datapath, 'training.json'), "w") as f:
         json.dump(data['data'], f)
 
     return {"status": "OK", "message": "Forecast Training Complete"}

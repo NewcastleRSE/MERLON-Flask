@@ -43,6 +43,7 @@ def create_app(test_config=None):
             return schedule.schedule(request.json)
         elif action == 'train':
             from . import forecast
+            forecast.store = app.instance_path
             return forecast.train(request.json)
 
     return app
