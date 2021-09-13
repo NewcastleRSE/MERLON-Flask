@@ -166,8 +166,12 @@ def formatPriceData(data, steps, length):
 
 def formatData(data, steps, length, buses, valuekey, converter=lambda v: v):
     for bus in buses:
+        if bus not in data:
+            data[bus] = [{ "interval": i, valuekey: 0} for i in range(steps)]
+        
         if len(data[bus]) < steps:
             raise ValueError
+
         data[bus].sort(key=lambda e: e['interval'])
     
     outdata = [[converter(data[bus][i][valuekey]) for i in range(steps)] for bus in buses]
