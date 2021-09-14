@@ -174,8 +174,8 @@ def getTrainedLoadModel(site, bus, store=".", lags=None, window=None, rawdata=No
         return model, scalers
     else:
         # ensure directory creation for saving model/scalers later
-        os.makedirs(os.path.dirname(modelpath))
-        os.makedirs(os.path.dirname(scalerpath))
+        os.makedirs(os.path.dirname(modelpath), exist_ok=True)
+        os.makedirs(os.path.dirname(scalerpath), exist_ok=True)
     
     # no trained model, so we need to format & scale data and train the model
     # training data is currently stored as a json-dumped list of dicts, containing:

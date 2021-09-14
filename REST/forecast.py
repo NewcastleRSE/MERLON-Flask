@@ -107,7 +107,7 @@ def train(data, debug=None):
     if "Load" in trainers:
         for bus in defaults[site]['busses']['loadbuses']:
             if bus in data['data']:
-                fc.getTrainedGenerationModel(site, bus, store=store, rawdata=data['data'][bus])
+                fc.getTrainedLoadModel(site, bus, store=store, rawdata=data['data'][bus])
 
     import os
     from datetime import date
