@@ -1,5 +1,6 @@
 import os
-from flask import Flask
+from flask import Flask, request
+from . import schedule, forecast
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -10,18 +11,15 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
     
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
+    os.makedirs(app.instance_path, exist_ok=True)
 
+    forecast.store = app.instance_path
+    
     
     # usage: POST https://host:port/api/schedule?api_key=<SAMPLE API KEY HERE>
     #        with appropriate request json in body (see samples)
     @app.route("/api/<action>", methods=['POST'])
     def do(action):
-        from flask import request
-        
         # check key against registered api keys (sample code only)
         key = request.args.get('api_key')
         if key != 'dj75sp1$-':
@@ -34,16 +32,11 @@ def create_app(test_config=None):
 
         # prep the parameters and return dict to pass to modules
         if action == 'forecast':
-            from . import forecast
-            forecast.store = app.instance_path
             return forecast.forecast(request.json)
         # dispatch body to scheduling or forecasting module
         elif action == 'schedule':
-            from . import schedule
             return schedule.schedule(request.json)
         elif action == 'train':
-            from . import forecast
-            forecast.store = app.instance_path
             return forecast.train(request.json)
 
     return app
