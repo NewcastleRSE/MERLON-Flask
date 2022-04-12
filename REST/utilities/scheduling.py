@@ -222,8 +222,8 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
         prod_curt = m.addVars(values['var_length'], t, lb=0, ub=prod, name="prod_curt")
 
     # Utilised flexibility (MW)
-    Ut_flex_up=m.addVars(len(flex_up),t,lb=0,ub=flex_up.T,name="Ut_flex_up")
-    Ut_flex_down=m.addVars(len(flex_down),t,lb=0,ub=flex_down.T,name="Ut_flex_down")
+    Ut_flex_up=m.addVars(len(flex_up),t,lb=0,ub=flex_up,name="Ut_flex_up")
+    Ut_flex_down=m.addVars(len(flex_down),t,lb=0,ub=flex_down,name="Ut_flex_down")
 
 
     # battery active charging power (MW)
