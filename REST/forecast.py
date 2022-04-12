@@ -4,11 +4,20 @@ from .metadata import definitions, defaults
 
 store = "."
 
+def interpolate(zeropoint, input, window, instep=30, outstep=1):
+    data = [zeropoint] + input
+    input_times = range(0, len(data)*instep, instep)
+    output_times = range(outstep,(window+1)*outstep,outstep)
+    return np.interp(output_times, input_times, data)
+
 def forecast(data, debug=None):
     metadata = { 
         'Site': data['Site'], 
-        'window': (data['horizon'] * definitions[data['horizonType']]) // (data['isp'] * definitions[data['ispType']])
+        'period': (data['horizon'] * definitions[data['horizonType']]),
+        'step': (data['isp'] * definitions[data['ispType']])
     }
+
+    metadata['window'] = metadata['period'] // metadata['step']
 
     load = loadforecast(data['HistoricLoad'], metadata)
     generation = generationforecast(data['HistoricGeneration'], metadata, debug)
@@ -30,8 +39,6 @@ def loadforecast(data, metadata, debug=None):
         localdebug = {}
 
     lags, window = getDefaults(metadata['Site'], 'load')
-    if window != metadata['window']:
-        raise ValueError()
 
     result = {}
 
@@ -41,8 +48,14 @@ def loadforecast(data, metadata, debug=None):
 
         d.sort(key=lambda e: e['Date'])
         inL = np.array([d[l]['Load'] for l in lags]).reshape(1,-1)
-        outL = scalers['output'].inverse_transform(model.predict({'main_input': scalers['input'].transform(inL)})) 
-        result[bus] = [{'interval': i+1, 'load': str(l)} for i,l in enumerate(outL.reshape(-1))]
+        outL = scalers['output'].inverse_transform(model.predict({'main_input': scalers['input'].transform(inL)})).reshape(-1).tolist()
+
+        # model produces a 24-hour-ahead half-hourly forecast
+        # if the request is for anything else, interpolate the results:
+        if metadata['window'] != window or metadata['step'] != 30:
+            outL = interpolate(float(d[-1]['Load']), outL, metadata['window'], outstep=metadata['step'])
+
+        result[bus] = [{'interval': i+1, 'load': str(l)} for i,l in enumerate(outL)]
 
         if debugging:
             localdebug[bus] = {}
@@ -62,8 +75,7 @@ def generationforecast(data, metadata, debug=None):
         localdebug = {}
 
     lags, window = getDefaults(metadata['Site'], 'generation')
-    if window != metadata['window']:
-        raise ValueError()
+
 
     result = {}
     for bus in data.keys():
@@ -81,9 +93,15 @@ def generationforecast(data, metadata, debug=None):
         indict = {'load_input': inGs, 'temp_input': inWs}
         
         outGs = model.predict(indict)
-        outG = scalers['outG'].inverse_transform(outGs)
+        outG = scalers['outG'].inverse_transform(outGs).reshape(-1).tolist()
 
-        result[bus] = [{'interval': i+1, 'generation': str(g) if g > 0 else '0'} for i,g in enumerate(outG.reshape(-1))]
+        # model produces a 24-hour-ahead half-hourly forecast
+        # if the request is for anything else, interpolate the results:
+        if metadata['window'] != window or metadata['step'] != 30:
+            outG = interpolate(float(d[-1]['Generation']), outG, metadata['window'], outstep=metadata['step'])
+            
+
+        result[bus] = [{'interval': i+1, 'generation': str(g) if g > 0 else '0'} for i,g in enumerate(outG)]
 
         if debugging:
             localdebug[bus]['inG'] = inG

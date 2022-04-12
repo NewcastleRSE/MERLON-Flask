@@ -1,10 +1,9 @@
 def getGenerationModel(inputshape, wdw, store):
     """Creates an ANN using the LTSM architecture"""
 
-    from keras.models import Model, load_model
-    from keras.layers import Dense, LSTM, Flatten
-    from keras.layers import concatenate, Permute, multiply
-    from keras import Input
+    from tensorflow.keras.models import Model, load_model
+    from tensorflow.keras.layers import Dense, LSTM, Flatten, concatenate, Permute, multiply
+    from tensorflow.keras import Input
 
     import os
     shapeforpath = "-".join([str(x) for x in inputshape])
@@ -46,8 +45,8 @@ def getGenerationModel(inputshape, wdw, store):
 def getLoadModel(inputshape, wdw, store):
     """Creates an ANN using a Dense architecture"""
 
-    from keras.models import Sequential, load_model
-    from keras.layers import Dense, Dropout
+    from tensorflow.keras.models import Sequential, load_model
+    from tensorflow.keras.layers import Dense, Dropout
 
     import os
     shapeforpath = "-".join([str(x) for x in inputshape])
@@ -69,7 +68,7 @@ def getLoadModel(inputshape, wdw, store):
     return model
 
 def getTrainedGenerationModel(site, bus, store=".", lags=None, window=None, rawdata=None, debug=None):
-    from keras.models import load_model
+    from tensorflow.keras.models import load_model
     import os
     import pickle
 
@@ -151,7 +150,7 @@ def getTrainedGenerationModel(site, bus, store=".", lags=None, window=None, rawd
     return model, scalers
 
 def getTrainedLoadModel(site, bus, store=".", lags=None, window=None, rawdata=None, debug=None):
-    from keras.models import load_model
+    from tensorflow.keras.models import load_model
     import os
     import pickle
 
