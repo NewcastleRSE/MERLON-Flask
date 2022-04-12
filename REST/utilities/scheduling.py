@@ -420,8 +420,20 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
         return True, result
     elif status == GRB.INFEASIBLE or status == GRB.INF_OR_UNBD:
         m.computeIIS()
+        result = {}
 
-        return False, { 
-            name: m.getAttr(name) 
-            for name in ["IISConstr", "IISLB", "IISUB", "IISSOS", "IISQConstr", "IISGenConstr"] 
-        }
+        for name in ["IISConstr", "IISLB", "IISUB"]:
+            attr = m.getAttr(name)
+            result[name] = []
+
+            searching = True
+            found = -1
+
+            while searching:
+                try:
+                    found = attr.index(1, found+1)
+                    result[name].append(found)
+                except ValueError:
+                    searching = False
+
+        return False, result
