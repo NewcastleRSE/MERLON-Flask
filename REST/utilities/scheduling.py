@@ -262,17 +262,17 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
                 expr.addTerms(Z["branch2_8"].real,L[6,k])
             else:
                 expr.addTerms(ele_price[k]*steplength,Pact[0,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_up[0,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_up[1,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_up[2,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_up[3,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_up[4,k])
+                expr.addTerms(flex_price[0][k]*steplength,Ut_flex_up[0,k])
+                expr.addTerms(flex_price[1][k]*steplength,Ut_flex_up[1,k])
+                expr.addTerms(flex_price[2][k]*steplength,Ut_flex_up[2,k])
+                expr.addTerms(flex_price[3][k]*steplength,Ut_flex_up[3,k])
+                expr.addTerms(flex_price[4][k]*steplength,Ut_flex_up[4,k])
                 
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_down[0,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_down[1,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_down[2,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_down[3,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_down[4,k])
+                expr.addTerms(flex_price[0][k]*steplength,Ut_flex_down[0,k])
+                expr.addTerms(flex_price[1][k]*steplength,Ut_flex_down[1,k])
+                expr.addTerms(flex_price[2][k]*steplength,Ut_flex_down[2,k])
+                expr.addTerms(flex_price[3][k]*steplength,Ut_flex_down[3,k])
+                expr.addTerms(flex_price[4][k]*steplength,Ut_flex_down[4,k])
                 
         m.setObjective(expr, GRB.MINIMIZE)
 
