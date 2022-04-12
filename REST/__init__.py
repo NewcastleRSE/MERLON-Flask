@@ -35,7 +35,14 @@ def create_app(test_config=None):
             return forecast.forecast(request.json)
         # dispatch body to scheduling or forecasting module
         elif action == 'schedule':
-            return schedule.schedule(request.json)
+            try:
+                result = schedule.schedule(request.json)
+            except ValueError:
+                result =  {'message': 'You have provided an inappropriate value in your scheduling request.'}, 400
+            except:
+                result = {'message': 'An error occurred processing your request. Please report this to the service adminstrators.'}, 500
+            finally:
+                return result
         elif action == 'train':
             return forecast.train(request.json)
 
