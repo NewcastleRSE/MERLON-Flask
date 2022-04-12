@@ -379,7 +379,7 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
         raise ValueError
 
     # set acceptable optimality gap:
-    m.Params.mipgap=0.01
+    m.Params.mipgap=0.1
 
     # optimize problem:
     m.optimize()
