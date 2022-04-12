@@ -384,34 +384,44 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
     # optimize problem:
     m.optimize()
 
+    status = m.getAttr('Status')
     # format and return scheduling result:
-    result = {}
-    result['BatteryOperations'] = [
-        { 
-            'interval': i+1, 
-            'ActiveCharging': 0 if Pbcha[0,i].X < 5e-6 else (Pbcha[0,i].X/steplength)*1e3, 
-            'ActiveDischarging': 0 if Pbdisa[0,i].X < 5e-6 else (Pbdisa[0,i].X/steplength)*1e3,
-            'ReactivePower': 0 if abs(Pbrea[0,i].X) < 5e-6 else (Pbrea[0,i].X/steplength)*1e3,
-            'ExpectedChargeStatus': 0 if Eb[0,i].X/meta['batt_cap'] < 0.01 else Eb[0,i].X/meta['batt_cap']
-        }
-    for i in range(t)]
 
-    result['FlexibilityUtilisation'] = {
-        bus: [
-            {
-                'interval': i+1,
-                'upwards': 0 if Ut_flex_up[busi,i].X < 5e-6 else (Ut_flex_up[busi,i].X/steplength)*1e3,
-                'downwards': 0 if Ut_flex_down[busi,i].X < 5e-6 else (Ut_flex_down[busi,i].X/steplength)*1e3
+    if status == GRB.OPTIMAL:
+        result = {}
+        result['BatteryOperations'] = [
+            { 
+                'interval': i+1, 
+                'ActiveCharging': 0 if Pbcha[0,i].X < 5e-6 else (Pbcha[0,i].X/steplength)*1e3, 
+                'ActiveDischarging': 0 if Pbdisa[0,i].X < 5e-6 else (Pbdisa[0,i].X/steplength)*1e3,
+                'ReactivePower': 0 if abs(Pbrea[0,i].X) < 5e-6 else (Pbrea[0,i].X/steplength)*1e3,
+                'ExpectedChargeStatus': 0 if Eb[0,i].X/meta['batt_cap'] < 0.01 else Eb[0,i].X/meta['batt_cap']
             }
         for i in range(t)]
-    for busi, bus in enumerate(busses['flexbuses'])}
 
-    result['GridPower'] = [
-        {
-            'interval': i+1,
-            'activePower': 0 if abs(Pact[0,i].X) < 5e-6 else (Pact[0,i].X/steplength)*1e3,
-            'reactivePower': 0 if abs(Prea[0,i].X) < 5e-6 else (Prea[0,i].X/steplength)*1e3
+        result['FlexibilityUtilisation'] = {
+            bus: [
+                {
+                    'interval': i+1,
+                    'upwards': 0 if Ut_flex_up[busi,i].X < 5e-6 else (Ut_flex_up[busi,i].X/steplength)*1e3,
+                    'downwards': 0 if Ut_flex_down[busi,i].X < 5e-6 else (Ut_flex_down[busi,i].X/steplength)*1e3
+                }
+            for i in range(t)]
+        for busi, bus in enumerate(busses['flexbuses'])}
+
+        result['GridPower'] = [
+            {
+                'interval': i+1,
+                'activePower': 0 if abs(Pact[0,i].X) < 5e-6 else (Pact[0,i].X/steplength)*1e3,
+                'reactivePower': 0 if abs(Prea[0,i].X) < 5e-6 else (Prea[0,i].X/steplength)*1e3
+            }
+        for i in range(t)]
+
+        return True, result
+    elif status == GRB.INFEASIBLE or status == GRB.INF_OR_UNBD:
+        m.computeIIS()
+
+        return False, { 
+            name: m.getAttr(name) 
+            for name in ["IISConstr", "IISLB", "IISUB", "IISSOS", "IISQConstr", "IISGenConstr"] 
         }
-    for i in range(t)]
-
-    return result

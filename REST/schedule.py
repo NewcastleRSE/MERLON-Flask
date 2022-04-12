@@ -31,7 +31,7 @@ def schedule(data):
     else:
         ele_price = None
 
-    result = sc.buildAndOptimiseModel(
+    success, result = sc.buildAndOptimiseModel(
         site, 
         scenario, 
         window, 
@@ -47,11 +47,18 @@ def schedule(data):
         busses
     )
 
-    return {
-        'ScheduleStartDate': data['SchedulePeriodStart'],
-        'horizon': data['horizon'],
-        'horizonType': data['horizonType'],
-        'isp': data['isp'],
-        'ispType': data['ispType'],
-        'Schedule': result
-    }
+    if success:
+        return {
+            'ScheduleStartDate': data['SchedulePeriodStart'],
+            'horizon': data['horizon'],
+            'horizonType': data['horizonType'],
+            'isp': data['isp'],
+            'ispType': data['ispType'],
+            'Schedule': result
+        }
+    else:
+        return {
+            'result': 'failed',
+            'reason': 'infeasible',
+            'details': result
+        }, 500
