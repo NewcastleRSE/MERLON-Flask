@@ -190,9 +190,9 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
     v_max = (1+values['v_delta'])**2
 
     # define lower and upper boundary
-    v_lb=[[v_min] * t] * values['var_length']+1
+    v_lb=[[v_min] * t] * (values['var_length']+1)
     v_lb[0][:]=[1]*t
-    v_ub=[[v_max] * t] * values['var_length']+1
+    v_ub=[[v_max] * t] * (values['var_length']+1)
     v_ub[0][:]=[1]*t
 
     m = Model("socp")
