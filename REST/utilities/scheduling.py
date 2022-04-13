@@ -313,7 +313,7 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
             m.addConstr(Pbdisa[0,k]<=(1-B_bin[0,k])*meta['batt_pow'])
             
             m.addConstr(Pbcha[0,k]**2+Pbrea[0,k]**2<=meta['batt_pow']**2)
-            m.addConstr(Pbdisa[0,k]**2+Pbrea[0,k]**2<=meta['batt_pow'])
+            m.addConstr(Pbdisa[0,k]**2+Pbrea[0,k]**2<=meta['batt_pow']**2)
             
             if k==0:
                 m.addConstr(batt_ini+Pbcha[0,k]*steplength*meta['nch']-Pbdisa[0,k]*steplength/meta['ndis']==Eb[0,k])
