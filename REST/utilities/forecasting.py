@@ -212,6 +212,14 @@ def getForecastDefaults(site):
     return defaults[site]['forecasting']
 
 def formatGenerationTrainingData(rawdata, lags, window):
+    # 13-04-2022: add handlers for non-sequential data - allows training to data to have gaps.
+    # n.b. gaps in data smaller than 2* targetdays will 
+    
+    from datetime import date
+
+    def checkgap(date1, date2, targetdays):
+        return abs((date.fromisoformat(date1) - date.fromisoformat(date2)).days) == targetdays
+    
     # assumes rawdata is a list drawn from json in the forecastRequest format, approx. format
     # { Date: '...', 'Temperature': 11.5, 'Generation': 35.2 }
     # assume Radiation is not available (as per 28/08/2020)
@@ -221,9 +229,9 @@ def formatGenerationTrainingData(rawdata, lags, window):
     samples = len(rawdata)-window*2
     
     results = {}
-    results['inW'] = [[rawdata[x+l][Wkey] for l in lags] for x in range(samples)]
-    results['inG'] = [[rawdata[x+l][Gkey] for l in lags] for x in range(samples)]
-    results['outG'] = [[rawdata[x+w][Gkey] for w in range(window)] for x in range(window,samples+window)]
+    results['inW'] = [[rawdata[x+l][Wkey] for l in lags] for x in range(samples) if checkgap(rawdata[x]['Date'][:10], rawdata[x+window]['Date'][:10], 1)]
+    results['inG'] = [[rawdata[x+l][Gkey] for l in lags] for x in range(samples) if checkgap(rawdata[x]['Date'][:10], rawdata[x+window]['Date'][:10], 1)]
+    results['outG'] = [[rawdata[x+w][Gkey] for w in range(window)] for x in range(window,samples+window) if checkgap(rawdata[x]['Date'][:10], rawdata[x-window]['Date'][:10], 1)]
     return results
 
 def formatLoadTrainingData(rawdata, lags, window):
