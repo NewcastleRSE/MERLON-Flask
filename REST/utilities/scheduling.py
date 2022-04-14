@@ -357,7 +357,7 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
             
             
             # voltage constraints
-            m.addConstr(v[0,k]-v[1,k]-2*["branch1_2"].real*P[0,k]-2*Z["branch1_2"].imag*Q[0,k]+(Z["branch1_2"].real**2+Z["branch1_2"].imag**2)*L[0,k]==0)
+            m.addConstr(v[0,k]-v[1,k]-2*Z["branch1_2"].real*P[0,k]-2*Z["branch1_2"].imag*Q[0,k]+(Z["branch1_2"].real**2+Z["branch1_2"].imag**2)*L[0,k]==0)
             
             # constraints for battery
             
