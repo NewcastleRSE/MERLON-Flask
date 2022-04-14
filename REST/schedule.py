@@ -50,7 +50,7 @@ def schedule(data):
 
     while not success and retry < 10:
         retry += 1
-        
+
         success, result = sc.buildAndOptimiseModel(
         site, 
         scenario, 
@@ -86,5 +86,6 @@ def schedule(data):
         return {
             'result': 'failed',
             'reason': 'infeasible',
+            'retries': retry,
             'details': result
         }, 500
