@@ -189,6 +189,8 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
     v_min = (1-(values['v_delta'] + (0.01*retry)))**2
     v_max = (1+(values['v_delta'] + (0.01*retry)))**2
 
+    print(v_min, v_max)
+
     # define lower and upper boundary
     v_lb=[[v_min] * t] * (values['var_length']+1)
     v_lb[0][:]=[1]*t

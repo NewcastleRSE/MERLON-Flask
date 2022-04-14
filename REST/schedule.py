@@ -48,7 +48,7 @@ def schedule(data):
         busses
     )
 
-    while not success and retry < 10:
+    while not success and retry < 50:
         retry += 1
 
         success, result = sc.buildAndOptimiseModel(
