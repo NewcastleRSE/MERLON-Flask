@@ -158,7 +158,7 @@ def applyFrequencyResponse(lower, upper, settings, startDate, steps, steplength)
             upper[0,s] = settings['max']
             lower[0,s] = settings['min']
     
-def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, flex_down, flex_price, ele_price, batt_ini, meta, busses):
+def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, flex_down, flex_price, ele_price, batt_ini, meta, busses, retry=0):
     from gurobipy import GRB, Model, LinExpr, QuadExpr
     from math import tan, acos
 
@@ -185,9 +185,9 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
         },
     }[site]
 
-    # constraining values
-    v_min = (1-values['v_delta'])**2
-    v_max = (1+values['v_delta'])**2
+    # constraining values - adds additional variance if we are retrying the schedule
+    v_min = (1-(values['v_delta'] + (0.01*retry)))**2
+    v_max = (1+(values['v_delta'] + (0.01*retry)))**2
 
     # define lower and upper boundary
     v_lb=[[v_min] * t] * (values['var_length']+1)

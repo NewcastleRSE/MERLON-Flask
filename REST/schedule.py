@@ -31,6 +31,7 @@ def schedule(data):
     else:
         ele_price = None
 
+    retry = 0
     success, result = sc.buildAndOptimiseModel(
         site, 
         scenario, 
@@ -47,8 +48,28 @@ def schedule(data):
         busses
     )
 
+    while not success and retry < 10:
+        retry += 1
+        
+        success, result = sc.buildAndOptimiseModel(
+        site, 
+        scenario, 
+        window, 
+        steplength, 
+        load, 
+        prod, 
+        flex_up, 
+        flex_down, 
+        flex_price,
+        ele_price,
+        batt_ini,
+        meta,
+        busses,
+        retry=retry
+    )
+
     if success:
-        return {
+        output = {
             'ScheduleStartDate': data['SchedulePeriodStart'],
             'horizon': data['horizon'],
             'horizonType': data['horizonType'],
@@ -56,6 +77,11 @@ def schedule(data):
             'ispType': data['ispType'],
             'Schedule': result
         }
+
+        if retry > 0:
+            output['additionalVoltageSlack'] = 0.01*retry
+
+        return output
     else:
         return {
             'result': 'failed',
