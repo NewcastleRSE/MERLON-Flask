@@ -96,14 +96,14 @@ def getAdmittanceMatrix(site):
 
 
         return {
-            "branch1_2": 1/(line["s0100"]+line["s0200"]+line["s0201"]+line["b0100"]+line["b02001"]+line["b02002"]+line["b02003"]+line["b02004"]+line["b03001"]+line["b03002"]+line["b03003"]),
-            "branch2_3": 1/(line["b03a001"]+line["b03a002"]+line["b04001"]+line["b04002"]+line["b42001"]),
-            "branch3_4": 1/(line["b42003"]+line["b42002"]),
-            "branch4_5": 1/(line["b07003"]),
-            "branch5_6": 1/(line["b07002"]),
-            "branch6_7": 1/(line["b07001"]),
-            "branch7_8": 1/(line["b0600"]),
-            "branch2_8": 1/(line["b03a001"]+line["b03a002"]+line["b04001"]+line["b04002"]+line["b05001"]+line["b05002"]),
+            "branch1_2": (line["s0100"]+line["s0200"]+line["s0201"]+line["b0100"]+line["b02001"]+line["b02002"]+line["b02003"]+line["b02004"]+line["b03001"]+line["b03002"]+line["b03003"]),
+            "branch2_3": (line["b03a001"]+line["b03a002"]+line["b04001"]+line["b04002"]+line["b42001"]),
+            "branch3_4": (line["b42003"]+line["b42002"]),
+            "branch4_5": (line["b07003"]),
+            "branch5_6": (line["b07002"]),
+            "branch6_7": (line["b07001"]),
+            "branch7_8": (line["b0600"]),
+            "branch2_8": (line["b03a001"]+line["b03a002"]+line["b04001"]+line["b04002"]+line["b05001"]+line["b05002"]),
         }
 
     if site == "es-crevillent":
