@@ -306,7 +306,7 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
             m.addConstr(v[5,k]-v[4,k]-2*Z["branch5_6"].real*P[3,k]-2*Z["branch5_6"].imag*Q[3,k]+(Z["branch5_6"].real**2+Z["branch5_6"].imag**2)*L[3,k]==0)
             m.addConstr(v[6,k]-v[5,k]-2*Z["branch6_7"].real*P[4,k]-2*Z["branch6_7"].imag*Q[4,k]+(Z["branch6_7"].real**2+Z["branch6_7"].imag**2)*L[4,k]==0)
             m.addConstr(v[7,k]-v[6,k]-2*Z["branch7_8"].real*P[5,k]-2*Z["branch7_8"].imag*Q[5,k]+(Z["branch7_8"].real**2+Z["branch7_8"].imag**2)*L[5,k]==0)
-            m.addConstr(v[7,k]-v[6,k]-2*Z["branch7_8"].real*P[5,k]-2*Z["branch7_8"].imag*Q[5,k]+(Z["branch7_8"].real**2+Z["branch7_8"].imag**2)*L[5,k]==0)
+            #m.addConstr(v[7,k]-v[6,k]-2*Z["branch7_8"].real*P[5,k]-2*Z["branch7_8"].imag*Q[5,k]+(Z["branch7_8"].real**2+Z["branch7_8"].imag**2)*L[5,k]==0)
             m.addConstr(v[1,k]-v[7,k]-2*Z["branch2_8"].real*P[6,k]-2*Z["branch2_8"].imag*Q[6,k]+(Z["branch2_8"].real**2+Z["branch2_8"].imag**2)*L[6,k]==0)
             
             # constraints for battery
