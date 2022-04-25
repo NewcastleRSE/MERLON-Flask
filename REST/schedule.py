@@ -2,8 +2,7 @@ from .utilities import scheduling as sc
 from .metadata import defaults, definitions
 
 def schedule(data):
-# this data set up step should be common to all schedules:
-    import datetime as dt
+
     site = data['Site']
     scenario = data['scenario']
 
