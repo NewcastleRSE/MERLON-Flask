@@ -189,13 +189,10 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
     v_min = (1-(values['v_delta'] + (0.01*retry)))**2
     v_max = (1+(values['v_delta'] + (0.01*retry)))**2
 
-    print(v_min, v_max)
 
     # define lower and upper boundary
-    v_lb=[[v_min] * t] * (values['var_length']+1)
-    v_lb[0][:]=[1]*t
-    v_ub=[[v_max] * t] * (values['var_length']+1)
-    v_ub[0][:]=[1]*t
+    v_lb=[[1 if j == 0 else v_min for i in range(t)] for j in range(values['var_length']+1)]
+    v_ub=[[1 if j == 0 else v_max for i in range(t)] for j in range(values['var_length']+1)]
 
     m = Model("socp")
 
@@ -306,7 +303,6 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
             m.addConstr(v[5,k]-v[4,k]-2*Z["branch5_6"].real*P[3,k]-2*Z["branch5_6"].imag*Q[3,k]+(Z["branch5_6"].real**2+Z["branch5_6"].imag**2)*L[3,k]==0)
             m.addConstr(v[6,k]-v[5,k]-2*Z["branch6_7"].real*P[4,k]-2*Z["branch6_7"].imag*Q[4,k]+(Z["branch6_7"].real**2+Z["branch6_7"].imag**2)*L[4,k]==0)
             m.addConstr(v[7,k]-v[6,k]-2*Z["branch7_8"].real*P[5,k]-2*Z["branch7_8"].imag*Q[5,k]+(Z["branch7_8"].real**2+Z["branch7_8"].imag**2)*L[5,k]==0)
-            #m.addConstr(v[7,k]-v[6,k]-2*Z["branch7_8"].real*P[5,k]-2*Z["branch7_8"].imag*Q[5,k]+(Z["branch7_8"].real**2+Z["branch7_8"].imag**2)*L[5,k]==0)
             m.addConstr(v[1,k]-v[7,k]-2*Z["branch2_8"].real*P[6,k]-2*Z["branch2_8"].imag*Q[6,k]+(Z["branch2_8"].real**2+Z["branch2_8"].imag**2)*L[6,k]==0)
             
             # constraints for battery
