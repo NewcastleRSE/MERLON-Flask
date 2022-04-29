@@ -332,8 +332,8 @@ def buildAndOptimiseModel(site, scenario, t, steplength, load, prod, flex_up, fl
                 expr.addTerms(1,Pact[0,k],Pact[0,k])
             elif scenario == 'market':
                 expr.addTerms(ele_price[k]*steplength,Pact[0,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_up[0,k])
-                expr.addTerms(flex_price[k]*steplength,Ut_flex_down[0,k])
+                expr.addTerms(flex_price[0][k]*steplength,Ut_flex_up[0,k])
+                expr.addTerms(flex_price[0][k]*steplength,Ut_flex_down[0,k])
             else:
                 expr.addTerms(Z["branch1_2"].real,L[0,k])
             
